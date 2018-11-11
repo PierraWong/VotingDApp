@@ -1,0 +1,413 @@
+{
+  "ApplicationName": "VotingDAppT5",
+  "DisplayName": "Voting DAppT5",
+  "Description": "A voting application to allow judges to vote for the listed idea.",
+  "ApplicationRoles": [
+    {
+      "Name": "VotingAdmin",
+      "Description": "Administrator of the Voting App."
+    },
+    {
+      "Name": "VotingUser",
+      "Description": "Users who participate in the Voting as validator/judge."
+    }
+  ],
+  "Workflows": [
+    {
+      "Name": "VotingIdea",
+      "DisplayName": "Voting Idea",
+      "Description": "Contains a list of voting ideas for voting.",
+      "Initiators": [ "VotingAdmin" ],
+      "StartState":  "IdeaRegistered",
+      "Properties": [
+        {
+          "Name": "State",
+          "DisplayName": "State",
+          "Description": "Holds the state of the current scope",
+          "Type": {
+            "Name": "state"
+          }
+        },
+        {
+          "Name": "Description",
+          "DisplayName": "Description",
+          "Description": "Describes the idea registered",
+          "Type": {
+            "Name": "string"
+          }
+        },
+        {
+          "Name": "Location",
+          "DisplayName": "Location",
+          "Description": "Location of the idea owner",
+          "Type": {
+            "Name": "string"
+          }
+        },
+        {
+          "Name": "IdeaBalance",
+          "DisplayName": "Balance",
+          "Description": "Idea Voting Balance",
+          "Type": {
+            "Name": "int"
+          }
+        },
+        {
+          "Name": "InstanceValidator",
+          "DisplayName": "Validator",
+          "Description": "The user who validates this idea",
+          "Type": {
+            "Name": "VotingUser"
+          }
+        }
+      ],
+      "Constructor": {
+        "Parameters": [
+          {
+            "Name": "description",
+            "Description": "The description of this idea",
+            "DisplayName": "Idea Description",
+            "Type": {
+              "Name": "string"
+            }
+          },
+          {
+            "Name": "location",
+            "Description": "The location of this idea owner",
+            "DisplayName": "Idea Location",
+            "Type": {
+              "Name": "string"
+            }
+          },
+          {
+            "Name": "validator",
+            "Description": "The vaidator of this idea",
+            "DisplayName": "Idea Validator",
+            "Type": {
+              "Name": "VotingUser"
+            }
+          }
+        ]
+      },
+      "Functions": [
+        {
+          "Name": "ValidateIdea",
+          "DisplayName": "Confirm Validation of the Idea",
+          "Description": "Confirm Validation of the Idea",
+          "Parameters": []
+        },
+        {
+          "Name": "UpdateIdeaBalance",
+          "DisplayName": "Update Idea Balance",
+          "Description": "Update Idea Balance",
+          "Parameters": [
+              {
+                "Name": "votingToken",
+                "Description": "Voting Token",
+                "DisplayName": "Voting Token",
+                "Type": {
+                  "Name": "int"
+                }
+              }
+          ]
+        }
+      ],
+      "States": [
+        {
+          "Name": "IdeaRegistered",
+          "DisplayName": "Registered",
+          "Description": "The initial state of the voting idea workflow",
+          "PercentComplete": 10,
+          "Style": "Success",
+          "Transitions": [
+            {
+              "AllowedRoles": [],
+              "AllowedInstanceRoles": ["InstanceValidator"],
+              "Description": "Mark this idea as validated",
+              "Function": "ValidateIdea",
+              "NextStates": [ "IdeaListed" ],
+              "DisplayName": "Listed."
+            }
+          ]
+        },
+        {
+          "Name": "IdeaListed",
+          "DisplayName": "Listed",
+          "Description": "Idea Listed",
+          "PercentComplete": 60,
+          "Style": "Success",
+          "Transitions": [
+            {
+              "AllowedRoles": [],
+              "AllowedInstanceRoles": [],
+              "Description": "Cast Vote",
+              "Function": "UpdateIdeaBalance",
+              "NextStates": [ "CurrentIdeaBalance" ],
+              "DisplayName": "Current Balance."
+            }
+          ]
+        },
+        {
+          "Name": "CurrentIdeaBalance",
+          "DisplayName": "Current Balance",
+          "Description": "Current Idea Vote Balance",
+          "PercentComplete": 80,
+          "Style": "Success",
+          "Transitions": [
+            {
+              "AllowedRoles": [],
+              "AllowedInstanceRoles": [],
+              "Description": "Cast Vote",
+              "Function": "UpdateIdeaBalance",
+              "NextStates": [ "CurrentIdeaBalance" ],
+              "DisplayName": "Current Balance."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Name": "VotingJudge",
+      "DisplayName": "Voting Judge",
+      "Description": "Contains a list of voting judges to cast voting.",
+      "Initiators": [ "VotingAdmin" ],
+      "StartState":  "JudgeRegistered",
+      "Properties": [
+        {
+          "Name": "State",
+          "DisplayName": "State",
+          "Description": "Holds the state of the current scope",
+          "Type": {
+            "Name": "state"
+          }
+        },
+        {
+          "Name": "InstanceJudge",
+          "DisplayName": "Judge",
+          "Description": "Judge",
+          "Type": {
+            "Name": "VotingUser"
+          }
+        },
+        {
+          "Name": "Location",
+          "DisplayName": "Location",
+          "Description": "Location of the judge",
+          "Type": {
+            "Name": "string"
+          }
+        },
+        {
+          "Name": "JudgeBalance",
+          "DisplayName": "Balance",
+          "Description": "Judege Token Balance",
+          "Type": {
+            "Name": "int"
+          }
+        }
+      ],
+      "Constructor": {
+        "Parameters": [
+          {
+            "Name": "judge",
+            "Description": "Judge",
+            "DisplayName": "Judge",
+            "Type": {
+              "Name": "VotingUser"
+            }
+          },
+          {
+            "Name": "location",
+            "Description": "The location of this judge",
+            "DisplayName": "Judge Location",
+            "Type": {
+              "Name": "string"
+            }
+          },
+          {
+            "Name": "judgeBalance",
+            "Description": "The token assigned to this judge",
+            "DisplayName": "Judge Token",
+            "Type": {
+              "Name": "int"
+            }
+          }
+        ]
+      },
+      "Functions": [
+        {
+          "Name": "UpdateJudgeBalance",
+          "DisplayName": "Update Judge Balance",
+          "Description": "Update Judge Balance",
+          "Parameters": [
+              {
+                "Name": "votingToken",
+                "Description": "Voting Token",
+                "DisplayName": "Voting Token",
+                "Type": {
+                  "Name": "int"
+                }
+              }
+          ]
+        }
+      ],
+      "States": [
+        {
+          "Name": "JudgeRegistered",
+          "DisplayName": "Registered",
+          "Description": "The initial state of the voting judge workflow",
+          "PercentComplete": 40,
+          "Style": "Success",
+          "Transitions": [
+            {
+              "AllowedRoles": [],
+              "AllowedInstanceRoles": [],
+              "Description": "Cast Vote",
+              "Function": "UpdateJudgeBalance",
+              "NextStates": [ "CurrentJudgeBalance" ],
+              "DisplayName": "Current Balance."
+            }
+          ]
+        },
+        {
+          "Name": "CurrentJudgeBalance",
+          "DisplayName": "Current Balance",
+          "Description": "Current Judge Token Balance",
+          "PercentComplete": 60,
+          "Style": "Success",
+          "Transitions": [
+            {
+              "AllowedRoles": [],
+              "AllowedInstanceRoles": [],
+              "Description": "Cast Vote",
+              "Function": "UpdateJudgeBalance",
+              "NextStates": [ "CurrentJudgeBalance" ],
+              "DisplayName": "Current Balance."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Name": "IdeaListing",
+      "DisplayName": "Idea Listing",
+      "Description": "Idea listed that can be voted by a judge with tokens",
+      "Initiators": [],
+      "StartState":  "IdeaAvailable",
+      "Properties": [
+        {
+          "Name": "State",
+          "DisplayName": "State",
+          "Description": "Holds the state of the current scope",
+          "Type": {
+            "Name": "state"
+          }
+        },
+        {
+          "Name": "Location",
+          "DisplayName": "Location",
+          "Description": "Location of the idea owner",
+          "Type": {
+            "Name": "string"
+          }
+        },
+        {
+          "Name": "Description",
+          "DisplayName": "Idea Description",
+          "Description": "Idea Description",
+          "Type": {
+            "Name": "string"
+          }
+        },
+        {
+          "Name": "VotingToken",
+          "DisplayName": "Voting Token",
+          "Description": "Voting Token",
+          "Type": {
+            "Name": "int"
+          }
+        },
+        {
+          "Name": "InstanceJudge",
+          "DisplayName": "Judge",
+          "Description": "Judge",
+          "Type": {
+            "Name": "VotingUser"
+          }
+        }
+      ],
+      "Constructor": {
+        "Parameters": [
+          {
+            "Name": "location",
+            "Description": "The location of this idea owner",
+            "DisplayName": "Idea Location",
+            "Type": {
+              "Name": "string"
+            }
+          },
+          {
+            "Name": "description",
+            "Description": "Idea Description",
+            "DisplayName": "Idea Description",
+            "Type": {
+              "Name": "string"
+            }
+          },
+          {
+            "Name": "parentIdeaAddress",
+            "Description": "Parent Idea Address",
+            "DisplayName": "Parent Idea Address ",
+            "Type": {
+              "Name": "address"
+            }
+          }
+        ]
+      },
+      "Functions": [
+        {
+          "Name": "VoteIdea",
+          "DisplayName": "Vote Idea",
+          "Description": "Vote Idea",
+          "Parameters": [
+            {
+              "Name": "votingToken",
+              "Description": "Voting Token",
+              "DisplayName": "Voting Token",
+              "Type": {
+                "Name": "int"
+              }
+            } 
+          ]
+        }
+      ],
+      "States": [
+        {
+          "Name": "IdeaAvailable",
+          "DisplayName": "Idea Available",
+          "Description": "Idea Available",
+          "PercentComplete": 40,
+          "Style": "Success",
+          "Transitions": [
+            {
+              "AllowedRoles": ["VotingUser"],
+              "AllowedInstanceRoles": [],
+              "Description": "Vote Idea",
+              "Function": "VoteIdea",
+              "NextStates": [ "IdeaVoted" ],
+              "DisplayName": "Idea Voted."
+            }
+          ]
+        },
+        {
+          "Name": "IdeaVoted",
+          "DisplayName": "Idea Voted",
+          "Description": "Idea Voted",
+          "PercentComplete": 100,
+          "Style": "Success",
+          "Transitions": []
+        }
+      ]
+    }
+  ]
+}
